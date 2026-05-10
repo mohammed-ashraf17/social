@@ -1,0 +1,8 @@
+node_modules
+.env.development
+.env.production
+package-lock.json
+dist
+social-media-app-6ce43-firebase-adminsdk-fbsvc-f201853018.json
+.env*
+tsconfig.json
