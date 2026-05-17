@@ -5,8 +5,11 @@ import * as  PV from "../post/post.validation"
 import multerCloud from "../../common/middleware/multer.cloud";
 import { Store_Enum } from "../../common/enum/multer.enum";
 import { validation } from "../../common/middleware/validation";
+import commentRouter from "../comment/comment.controller";
 
 const postRouter=Router()
+
+postRouter.use("/:postId/comments{/:commentId/replies}" , commentRouter)
 
 
 postRouter.post("/createPost"  ,authentication,
@@ -21,10 +24,12 @@ postRouter.post("/createPost"  ,authentication,
     validation(PV.likePostSchema),
     PS.likePost )
 
-    postRouter.patch("/updatePost/:postId"  ,authentication,
+    postRouter.put("/updatePost/:postId"  ,authentication,
     multerCloud({store_type:Store_Enum.disk}).array("attachments"),
     validation(PV.updatePostchema),
     PS.updatePost )
+
+    postRouter.delete("/delete/:postId", authentication, PS.deletePost);
 
 
 export default postRouter

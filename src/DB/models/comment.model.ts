@@ -1,10 +1,11 @@
 import mongoose, { Types } from "mongoose";
-import { Allow_Comment_Enum, Availability_Enum } from "../../common/enum/post.enum";
+import { onModel_enum } from "../../common/enum/post.enum";
 
 
 
 
-export interface IPost {
+
+export interface IComment {
     content?: string,
     attachments?: string[],
 
@@ -13,16 +14,14 @@ export interface IPost {
     tags?: Types.ObjectId[],
     likes?: Types.ObjectId[]
 
-    allowComment?: Allow_Comment_Enum,
-    availability?: Availability_Enum,
-
     folderId: string,
+    refId:Types.ObjectId,
+    onModel:onModel_enum,
 
-    friends:Types.ObjectId[]
 }
 
 
-const postSchema = new mongoose.Schema<IPost>(
+const commentSchema = new mongoose.Schema<IComment>(
     {
         content:{type:String ,min:1 , required:function(this)
             {
@@ -33,20 +32,16 @@ const postSchema = new mongoose.Schema<IPost>(
         attachments:[String],
 
         createdBy:{type:Types.ObjectId , ref:"user" , required:true},
+        refId:{type:Types.ObjectId , refPath:"onModel" , required:true},
+        onModel:{type:String , enum: onModel_enum , required:true},
+
+        // commentId:{type:Types.ObjectId , ref:"Comment" },
+
 
         tags:[{type:Types.ObjectId , ref:"user" }],
         likes:[{type:Types.ObjectId , ref:"user"}],
 
-        allowComment:{type:String , enum:Allow_Comment_Enum , default:Allow_Comment_Enum.allow},
-        availability:{type:String , enum:Availability_Enum , default:Availability_Enum.public},
-
-        folderId: String,
-
-        friends:[{type:Types.ObjectId , ref:"user"}]
-
-
-        
-        
+        folderId: String,        
     
     },
     {
@@ -58,7 +53,7 @@ const postSchema = new mongoose.Schema<IPost>(
     }
 );
 
-postSchema.virtual("comments", {
+commentSchema.virtual("replies", {
     ref: "Comment",
     localField: "_id",
     foreignField: "refId",
@@ -66,8 +61,7 @@ postSchema.virtual("comments", {
 })
 
 
-
-// postSchema.pre("findOne" , function ()
+// CommentSchema.pre("findOne" , function ()
 // {
 //     console.log("...............pre findOne hook1.............");
 //     console.log(this.getQuery());
@@ -84,6 +78,6 @@ postSchema.virtual("comments", {
 // })
 
 
-const postModel = mongoose.models.Post || mongoose.model<IPost>("Post" , postSchema)
+const CommentModel = mongoose.models.Comment || mongoose.model<IComment>("Comment" , commentSchema)
 
-export default postModel
+export default CommentModel

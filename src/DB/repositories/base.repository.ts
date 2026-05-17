@@ -14,11 +14,13 @@ abstract class BaseRepository<TDocument> {
         return this.model.findById(id)
     }
 
-    async findOne({filter,projection}:{ filter: QueryFilter<TDocument> , projection?: QueryFilter<TDocument>  }):
-    Promise <HydratedDocument<TDocument>|null>
-    {
-        return this.model.findOne(filter,projection)
-    }
+    async findOne({ filter, projection, options }: { 
+    filter: QueryFilter<TDocument>, 
+    projection?: QueryFilter<TDocument>,
+    options?: QueryOptions<TDocument> // إضافة الـ options هنا
+}): Promise<HydratedDocument<TDocument> | null> {
+    return this.model.findOne(filter, projection, options);
+}
 
 
     async find ({filter,projection,options}:{filter:QueryFilter<TDocument> ,projection?:QueryFilter<TDocument>,options?: QueryOptions<TDocument> }):
@@ -46,11 +48,30 @@ abstract class BaseRepository<TDocument> {
     }
 
 
-    findOneAndDelete({filter , options} :{filter:QueryFilter<TDocument> , options?:UpdateQuery<TDocument>})
-    :Promise <HydratedDocument<TDocument>| null>
-    {
-        return this.model.findOneAndDelete(filter , options)
-    }
+   findOneAndDelete({
+    filter,
+    options
+}: {
+    filter: QueryFilter<TDocument>,
+    options?: QueryOptions<TDocument>
+}): Promise<HydratedDocument<TDocument> | null> {
+
+    return this.model.findOneAndDelete(
+        filter,
+        options
+    );
+}
+
+
+
+deleteMany({
+    filter
+}: {
+    filter: QueryFilter<TDocument>
+}) {
+
+    return this.model.deleteMany(filter);
+}
 
 
     async paginate<T>({

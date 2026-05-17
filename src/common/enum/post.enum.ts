@@ -13,3 +13,8 @@ export enum Likes_Enum {
     disLike = "disLike",
     Like = "Like"
 }
+
+export enum onModel_enum {
+    Post = "Post",
+    Comment = "Comment"
+}
