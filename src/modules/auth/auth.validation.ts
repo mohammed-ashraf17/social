@@ -2,6 +2,10 @@
 import * as z from "zod"
 import { GenderEnum, RoleEnum } from "../../common/enum/user.enum"
 
+export const getUserSchema = z.strictObject({
+    token: z.string()
+})
+
 export const signUpSchema = {
     body:z.object({
     userName: z.string().min(3).max(25),

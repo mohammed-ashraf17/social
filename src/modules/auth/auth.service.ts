@@ -4,7 +4,7 @@ import successResponse from "../../common/utils/success_respons/success.respons"
 import  { Iuser } from "../../DB/models/user.model"
 import { IsignupType, confirmeEmailDto, resendOtpDto, signInDto, update_PasswordDto, resetPasswordDto, forgetPasswordDto, forgetPasswordLinkDot, resetPasswordLinkDot, IsignInWithGemailTypes } from './auth.dto';
 import { compare_password, hash_password } from "../../common/utils/security/hash_password"
-import { HydratedDocument } from "mongoose"
+import { HydratedDocument, Types } from "mongoose"
 import { AppError } from "../../common/utils/global-error/global-error-handler"
 import { providerEnum, RoleEnum } from "../../common/enum/user.enum"
 import UserRepository from "../../DB/repositories/user.repository"
@@ -22,6 +22,13 @@ import { S3Service } from "../../common/service/s3.service";
 import notificationService from "../../common/service/notification.service";
 
 
+// const users = [
+//     { id: 1, name: "ashraf", age: 21, specielization: "MERN Stack" },
+//     { id: 2, name: "mohamed", age: 22, specielization: "MERN Stack" },
+//     { id: 3, name: "khaled", age: 21, specielization: "MERN Stack" },
+//     { id: 4, name: "amr", age: 25, specielization: "MERN Stack" },
+//     { id: 5, name: "sara", age: 50, specielization: "MERN Stack" },
+//     ];
 
 
 
@@ -563,6 +570,25 @@ await sendEmail({
 
     successResponse({res , data:{url , Key}})
 }
+
+//=======================Graphql========================
+
+    getUser = async ( userId: Types.ObjectId) => {
+    {
+    const user = await this._userModel.findOne({filter:{_id:userId}});
+            if (!user) {
+                throw new AppError("user not found");
+            }
+            return user;
+    }}
+
+
+    getUsers = async ( ) => {
+    {
+    
+            return await this._userModel.find({filter:{}});
+    }}
+    
 
 
 }

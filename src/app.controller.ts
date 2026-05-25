@@ -13,8 +13,10 @@ import redisService from "./common/service/redis.service"
 import { S3Service } from "./common/service/s3.service"
 import { pipeline } from "node:stream/promises"
 import postRouter from "./modules/post/post.controller"
-import { GraphQLString ,GraphQLObjectType , GraphQLSchema, GraphQLNonNull, GraphQLInt, GraphQLList,} from 'graphql';
 import { createHandler } from 'graphql-http/lib/use/express';
+
+import { gql_schema } from "./modules/graphql/graphql.schema"
+import { authentication } from "./common/middleware/authentication"
 
 
 
@@ -61,53 +63,9 @@ const boootstrap = async ()=>
     app.get("/", (req: Request, res: Response, next: NextFunction) => {
         successResponse({ res, data: "welcome to social media app..👻❤"  , status:201 , message: "doone"})
     })
+    
 
-    const users = [
-    { id: 1, name: "ashraf", age: 21, specielization: "MERN Stack" },
-    { id: 2, name: "mohamed", age: 22, specielization: "MERN Stack" },
-    { id: 3, name: "khaled", age: 21, specielization: "MERN Stack" },
-    { id: 4, name: "amr", age: 25, specielization: "MERN Stack" },
-    { id: 5, name: "sara", age: 50, specielization: "MERN Stack" },
-    ];
-    const userTypeObject = new GraphQLObjectType({
-    name: "getUser",
-    fields: {
-        id: { type: GraphQLInt },
-        name: { type: GraphQLString },
-        age: { type: GraphQLInt },
-        specielization: { type: GraphQLString },
-    },
-    });
-    const schema = new GraphQLSchema({
-    query: new GraphQLObjectType({
-      name: "Query", // it is  the root query
-        description: "query info",
-        fields: {
-        // this are the queries
-        getUser: {
-            type: userTypeObject,
-            args: {
-            id: { type: new GraphQLNonNull(GraphQLInt) },
-            },
-            resolve: (parent, args) => {
-            const user = users.find((user) => user.id == args.id);
-            if (!user) {
-                throw new AppError("user not found");
-            }
-            return user;
-            },
-        },
-        listUsers: {
-            type: new GraphQLList(userTypeObject),
-            resolve: () => {
-            return users;
-            },
-        },
-        },
-    }),
-    });
-
-  app.use("/graphql", createHandler({ schema })); // the endpoint for the graphql
+  app.use("/graphql",  createHandler({ schema:gql_schema , context: (req) => ({ req }) })); // the endpoint for the graphql
 
 
     // import notificationService from "./common/service/notification.service"
