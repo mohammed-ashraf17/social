@@ -32,7 +32,9 @@ export interface Iuser {
     profilePicture?: {
         secure_url?: string;
         public_id?: string;
-    };
+    },
+    friends?: Types.ObjectId[];
+    
 }
 const userSchema = new mongoose.Schema<Iuser>(
     {
@@ -111,7 +113,8 @@ const userSchema = new mongoose.Schema<Iuser>(
             enum: providerEnum,
             default: providerEnum.system
         },
-        deletedAt:String
+        deletedAt:String,
+            friends:[{ type: Types.ObjectId, ref: "user" }]
     },
     {
         timestamps: true,

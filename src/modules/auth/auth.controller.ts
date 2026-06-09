@@ -5,9 +5,12 @@ import { validation } from "../../common/middleware/validation";
 import { authentication } from "../../common/middleware/authentication";
 import multerCloud from "../../common/middleware/multer.cloud";
 import { Store_Enum } from "../../common/enum/multer.enum";
+import chatRouter from "../chat/chat.controller";
 
 
 const authRouter = Router()
+
+authRouter.use("/:userId/chat" , chatRouter  )
 
 authRouter.post("/signUp/gmail" , AS.signUpWithGmail)
 authRouter.post("/signUp" ,validation(AV.signUpSchema), AS.signUp )

@@ -7,11 +7,9 @@ import UserRepository from "../../DB/repositories/user.repository.js";
 
 const userModel = new UserRepository()
 
-export const authentication = async (req: Request, res: Response, next: NextFunction) => {
+export const decodeToken_and_fetchUser = async (auth: string) => {
 
-        const { auth } = req.headers;
-
-        if (!auth) {
+     if (!auth) {
             throw new AppError("token not exist", 403);
         }
         
@@ -34,7 +32,7 @@ export const authentication = async (req: Request, res: Response, next: NextFunc
         {
             throw new AppError("invalid token prefix", 403);
         }
-
+        console.log("TOKEN:", token);
         const decoded = tokenService.verifyToken({
             token,
             seucrit: ACCESS_SEUCRIT_KEY
@@ -74,6 +72,17 @@ export const authentication = async (req: Request, res: Response, next: NextFunc
         if (revokeToken) {
             throw new AppError("token revoked", 401);
         }
+        return {
+            user,
+            decoded
+        }
+}
+
+export const authentication = async (req: Request, res: Response, next: NextFunction) => {
+
+        const { auth } = req.headers;
+
+       const { user, decoded } = await decodeToken_and_fetchUser(auth as string)
 
         req.user = user
         req.decoded = decoded

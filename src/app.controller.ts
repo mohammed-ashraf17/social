@@ -16,7 +16,7 @@ import postRouter from "./modules/post/post.controller"
 import { createHandler } from 'graphql-http/lib/use/express';
 
 import { gql_schema } from "./modules/graphql/graphql.schema"
-import { authentication } from "./common/middleware/authentication"
+import socketGateway from "./modules/realtime/socket.gateway"
 
 
 
@@ -226,10 +226,12 @@ const boootstrap = async ()=>
 
     app.use(error_handler)
 
-    app.listen(port , ()=>
+    const httpServer = app.listen(port , ()=>
     {
         console.log(`Server is running on port ${port}......👻`);
     })
+
+    await socketGateway.initIo(httpServer)
 
 }
 

@@ -307,7 +307,7 @@ sendEmailOtp = async ({
     const access_token = this._tokenService.generateToken({paylod:{userId : user._id} , 
         seucrit:user?.role==RoleEnum.user?ACCESS_SEUCRIT_KEY_USER!:ACCESS_SEUCRIT_KEY_ADMIN!,
         options:{
-            expiresIn : 60*30 ,
+            expiresIn : "1y" ,
             issuer:"http://localhost:3001",
             audience:"http://localhost:4000",
             jwtid
@@ -336,7 +336,7 @@ sendEmailOtp = async ({
             )
 
         }
-    successResponse({res , data:{access_token , refresh_token}})
+    successResponse({res ,message:"Done", data:{access_token , refresh_token}})
 }
 
 
@@ -534,7 +534,18 @@ await sendEmail({
     getProfile = async (req: Request , res : Response , next : NextFunction)=>
 {
 
-    successResponse({res , data:req.user})
+    const user = await this._userModel.findOne({
+        filter: { _id: req.user?._id as Types.ObjectId },
+        options: {
+            populate: [
+                {
+                    path: "friends"
+                }
+            ]
+        }
+    })
+
+    successResponse({res , message: "success signin" , data:{user}})
 }
 
     uploadImage = async (req: Request , res : Response , next : NextFunction)=>
